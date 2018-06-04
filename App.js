@@ -1,22 +1,72 @@
 import React from 'react';
-import { Alert,StyleSheet, Text, View,Image,TextInput,Button } from 'react-native';
+import { Alert,StyleSheet, ActivityIndicator,FlatList,Text, View,Image,TextInput,Button } from 'react-native';
+import { List,ListItem } from 'react-native-elements'
+import Masonry from 'react-native-masonry';
+import FastImage from 'react-native-fast-image';
+
+
 
 export default class App extends React.Component {
+  constructor(props){
+    super(props);
+    this.state={isLoading:true}
+  }
+
   _onPressButton(){
     Alert.alert('da sha cha!')
   }
+  
+  componentDidMount(){
+    return fetch('http://bentoman.yubinwang.com/api/lunchbox')
+      .then((response) => response.json())
+      .then((responseJson) => {
+        // console.log(responseJson)
+        this.setState({
+          isLoading: false,
+          dataSource: responseJson,
+        }, function(){
+
+        });
+
+      })
+      .catch((error) =>{
+        console.error(error);
+      });
+  }
+
   render() {
     let pic={
       uri:'https://i.imgur.com/Keg7X6S.png'
     };
+    if(this.state.isLoading){
+      return(
+        <View style={{flex: 1, padding: 20}}>
+          <ActivityIndicator/>
+        </View>
+      )
+    }
     return (
+      // <List>
+      //   <FlatList
+      //     data={this.state.dataSource}
+      //     renderItem={({ item }) => (
+      //       <ListItem
+             
+      //         title={item.title}
+      //         subtitle={item.email}
+            
+      //       />
+      //     )}
+      //   />
+      // </List>
       <View style={styles.container}>
-       
-          <Image source={pic} style={{width: 250, height: 250}}/>
-          <Greeting name='SB' />
-          <Greeting name='Liu' />
-          <TextInput style={{height:40}} placeholder='Username'/>
-          <Button onPress={this._onPressButton} title='Log in'/>
+        <Masonry
+          bricks={[
+            { uri: 'http://bentoman.yubinwang.com/media/Lunchbox/Gadot/Isreali%20food/slide_377196_4504130_free.jpg' },
+            { uri: 'http://bentoman.yubinwang.com/media/Lunchbox/Emily/Beef%20Tofu/Lunchbox.jpg' }
+           
+  ]}
+/>
       </View>
     );
   }
